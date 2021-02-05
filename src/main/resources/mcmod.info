@@ -1,0 +1,16 @@
+[
+{
+  "modid": "Vapu",
+  "name": "Vapu",
+  "description": "Vapu like Vape",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["xue"],
+  "credits": "The Forge and FML guys, and xue",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
