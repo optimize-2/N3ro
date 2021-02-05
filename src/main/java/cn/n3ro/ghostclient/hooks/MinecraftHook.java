@@ -118,6 +118,8 @@ public class MinecraftHook {
         }
     }
 
+
+
     public static boolean isViewClipEnabled() {
         return Objects.requireNonNull(ModuleManager.getModuleByName("ViewClip")).isEnable();
     }

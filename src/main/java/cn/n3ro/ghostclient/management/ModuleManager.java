@@ -5,6 +5,7 @@ import cn.n3ro.ghostclient.module.Module;
 import cn.n3ro.ghostclient.module.modules.MOVEMENT.Eagle;
 import cn.n3ro.ghostclient.module.modules.MOVEMENT.InvMove;
 import cn.n3ro.ghostclient.module.modules.MOVEMENT.Sprint;
+import cn.n3ro.ghostclient.module.modules.PLAYER.NoCommand;
 import cn.n3ro.ghostclient.module.modules.RENDER.*;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class ModuleManager {
         addModule(new Sprint());
 
         //Player
-
+        addModule(new NoCommand());
 
         //Render
         addModule(new Chams());

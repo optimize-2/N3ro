@@ -36,9 +36,9 @@ public class ClassTransformer implements IClassTransformer, ClassFileTransformer
                 "net.minecraft.client.Minecraft",
                 "net.minecraft.client.entity.EntityPlayerSP",
                 "net.minecraft.network.NetworkManager",
-                "net.minecraft.profiler.Profiler",
                 "net.minecraft.client.renderer.EntityRenderer",
-                "net.minecraft.client.renderer.entity.RenderPlayer"
+                "net.minecraft.client.renderer.entity.RenderPlayer",
+                "net.minecraft.profiler.Profiler",
         };
         for (int i = 0; i < nameArray.length; i++) {
             classNameSet.add(nameArray[i]);
@@ -82,7 +82,7 @@ public class ClassTransformer implements IClassTransformer, ClassFileTransformer
                 return this.transformMethods(classByte, ProfilerHook::transformProfiler);
             }
             if (name.equalsIgnoreCase("net.minecraft.network.NetworkManager")) { //EventPacket
-                return this.transformMethods(classByte, PacketHook::transformNetworkManager);
+                return this.transformMethods(classByte, NetworkManagerHook::transformNetworkManager);
             }
             if (name.equalsIgnoreCase("net.minecraft.client.renderer.EntityRenderer")){//3d
                 return transformMethods(classByte, MinecraftHook::transformRenderEntityRenderer);
@@ -90,6 +90,7 @@ public class ClassTransformer implements IClassTransformer, ClassFileTransformer
             if (name.equalsIgnoreCase("net.minecraft.client.renderer.entity.RenderPlayer")){
                 return this.transformMethods(classByte,MinecraftHook::transformRendererLivingEntity);
             }
+
         } catch (Exception e) {
             LogManager.getLogger().log(Level.ERROR, ExceptionUtils.getStackTrace(e));
 

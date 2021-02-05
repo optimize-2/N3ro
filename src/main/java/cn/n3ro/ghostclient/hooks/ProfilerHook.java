@@ -37,7 +37,6 @@ public class ProfilerHook implements Opcodes {
     }
 
     public static void Event3D(){
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         EventRender3D er3 = new EventRender3D();
         EventManager.call(er3);
     }
