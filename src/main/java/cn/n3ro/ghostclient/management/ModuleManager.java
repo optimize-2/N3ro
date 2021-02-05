@@ -31,7 +31,6 @@ public class ModuleManager {
         //Render
         addModule(new Chams());
         addModule(new ClickGui());
-        addModule(new ESP());
         addModule(new HUD());
         addModule(new NoHurtCam());
         addModule(new ViewClip());
