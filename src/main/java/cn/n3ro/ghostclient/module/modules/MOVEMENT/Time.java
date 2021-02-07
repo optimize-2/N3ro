@@ -12,16 +12,16 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import com.darkmagician6.eventapi.EventTarget;
 
 public class Time extends Module {
-	public static Numbers<Float> TimerSpeed = new Numbers<Float>("TimeSpeed", 1F, 0.0F, 2F, 1F);
+    public static Numbers<Double> timerspeeds = new Numbers<Double>("TimeSpeed", 1D, 0.5D, 2D, 0.01D);
     public Time() {
         super("Timer", Category.MOVEMENT);
-        this.addValues(TimerSpeed);
+        this.addValues(timerspeeds);
     }
     
     @EventTarget
     private void onUpdate(EventUpdate event) {
     	 Timer timer = ReflectionHelper.getPrivateValue(Minecraft.class, mc, new String[]{Mappings.timer});
-         timer.timerSpeed = TimerSpeed.getValue();
+         timer.timerSpeed = timerspeeds.getValue().floatValue();
          
     }
     
