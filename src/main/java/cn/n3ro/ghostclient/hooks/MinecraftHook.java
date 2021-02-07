@@ -12,6 +12,7 @@ import cn.n3ro.ghostclient.module.modules.COMBAT.Reach;
 import cn.n3ro.ghostclient.module.modules.RENDER.Chams;
 import cn.n3ro.ghostclient.module.modules.RENDER.NoHurtCam;
 import cn.n3ro.ghostclient.utils.ASMUtil;
+import cn.n3ro.ghostclient.utils.ClassNodeUtils;
 import cn.n3ro.ghostclient.utils.GLUProjection;
 import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.types.EventType;
@@ -73,9 +74,14 @@ public class MinecraftHook {
      *	just reach test
      */
     
-    public static float getBlockReachDistance(){
-		return 100;
-    }
+    public static float getBlockReachDistance_Range(){
+    	if(ModuleManager.getModuleByName("Reach").isEnable() /*&& !ModManager.getModule("TPHit").isEnabled()*/) {
+		return Reach.reach.getValue().floatValue();
+	} else {
+		return Minecraft.getMinecraft().playerController.isInCreativeMode() ? 5F :4.5F;
+	}
+}
+    
     
  
     
@@ -94,7 +100,7 @@ public class MinecraftHook {
      */
     public static void hookKeyHandler() {
         if (Keyboard.getEventKeyState()) {
-            for (Module mod : Client.instance.moduleManager.getModList()) {
+            for (Module mod : ModuleManager.getModList()) {
                 if (Minecraft.getMinecraft().currentScreen == null) {
                     if (mod.getKey() != (Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey()))
                         continue;
@@ -108,7 +114,9 @@ public class MinecraftHook {
     
   
     
-    public static void transformRenderEntityRenderer(ClassNode classNode, MethodNode method) {
+    @SuppressWarnings("deprecation")
+	public static void transformRenderEntityRenderer(ClassNode classNode, MethodNode method) {
+
         if (method.name.equalsIgnoreCase("hurtCameraEffect") || method.name.equalsIgnoreCase("func_78482_e")){
             InsnList insnList = new InsnList();
             insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(MinecraftHook.class), "isNohurtcamEnable", "()Z", false));
@@ -132,6 +140,18 @@ public class MinecraftHook {
                 insnList2.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
                 method.instructions.insert(ASMUtil.forward(target,13),insnList2);
             }
+        }
+        if(method.name.equalsIgnoreCase("func_78473_a") || method.name.equalsIgnoreCase("getMouseOver")) {
+
+			LabelNode labelNode = new LabelNode();
+			method.instructions.insertBefore(method.instructions.getFirst(), ClassNodeUtils.toNodes(
+					new VarInsnNode(Opcodes.ALOAD, 0),
+					new VarInsnNode(Opcodes.FLOAD, 1),
+					new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(ProfilerHook.class), "getMouseOver", "(Lnet/minecraft/client/renderer/EntityRenderer;F)Z"),
+					new JumpInsnNode(Opcodes.IFEQ, labelNode),
+					new InsnNode(Opcodes.RETURN),
+					labelNode
+			));
         }
     }
 

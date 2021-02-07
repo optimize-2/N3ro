@@ -15,12 +15,14 @@ public class Time extends Module {
 	public static Numbers<Float> TimerSpeed = new Numbers<Float>("TimeSpeed", 1F, 0.0F, 2F, 1F);
     public Time() {
         super("Timer", Category.MOVEMENT);
+        this.addValues(TimerSpeed);
     }
     
     @EventTarget
     private void onUpdate(EventUpdate event) {
     	 Timer timer = ReflectionHelper.getPrivateValue(Minecraft.class, mc, new String[]{Mappings.timer});
          timer.timerSpeed = TimerSpeed.getValue();
+         
     }
     
     @Override
@@ -28,7 +30,5 @@ public class Time extends Module {
     	 Timer timer = ReflectionHelper.getPrivateValue(Minecraft.class, mc, new String[]{Mappings.timer});
          timer.timerSpeed = 1F;
     }
-    //forge注入	
-    
-    //asm的用另一个类这里还没写
+
 }

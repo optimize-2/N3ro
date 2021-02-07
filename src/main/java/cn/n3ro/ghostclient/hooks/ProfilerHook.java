@@ -12,6 +12,7 @@ import com.google.common.base.Predicates;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
@@ -46,101 +47,104 @@ public class ProfilerHook implements Opcodes {
         }
     }
     
-//    public static boolean getMouseOver(float partialTicks) {
-//    	 Minecraft mc = Minecraft.getMinecraft();
-//         Entity entity = mc.getRenderViewEntity();
-//         Entity pointedEntity = null;
-//         if (entity != null && mc.theWorld != null) {
-//             mc.mcProfiler.startSection("pick");
-//             mc.pointedEntity = null;
-//             double d0 = ModuleManager.getModuleByName("Reach").isEnable()? Reach.ReachRange.getValue()
-//                     : (double) mc.playerController.getBlockReachDistance();
-//             mc.objectMouseOver = entity.rayTrace(ModuleManager.getModuleByName("Reach").isEnable() ? Reach.ReachRange.getValue() : d0,
-//            		 partialTicks);
-//             double d1 = d0;
-//             Vec3 vec3 = entity.getPositionEyes(partialTicks);
-//             boolean flag = false;
-//             if (mc.playerController.extendedReach()) {
-//                 d0 = 6.0D;
-//                 d1 = 6.0D;
-//             } else if (d0 > 3.0D) {
-//                 flag = true;
-//             }
-//
-//             if (mc.objectMouseOver != null) {
-//                 d1 = mc.objectMouseOver.hitVec.distanceTo(vec3);
-//             }
-//
-//             if (ModuleManager.getModuleByName("Reach").isEnable()) {
-//                 d1 = Reach.ReachRange.getValue();
-//                 MovingObjectPosition vec31 = entity.rayTrace(d1, partialTicks);
-//                 if (vec31 != null) {
-//                     d1 = vec31.hitVec.distanceTo(vec3);
-//                 }
-//             }
-//
-//             Vec3 var24 = entity.getLook(partialTicks);
-//             Vec3 vec32 = vec3.addVector(var24.xCoord * d0, var24.yCoord * d0, var24.zCoord * d0);
-//             pointedEntity = null;
-//             Vec3 vec33 = null;
-//             float f = 1.0F;
-//             List list = mc.theWorld.getEntitiesInAABBexcluding(entity,
-//                     entity.getEntityBoundingBox().addCoord(var24.xCoord * d0, var24.yCoord * d0, var24.zCoord * d0)
-//                             .expand(f, f, f),
-//                     Predicates.and(EntitySelectors.NOT_SPECTATING, (p_apply_1_) -> {
-//                         return p_apply_1_.canBeCollidedWith();
-//                     }));
-//             double d2 = d1;
-//
-//             for (int j = 0; j < list.size(); ++j) {
-//                 Entity entity1 = (Entity) list.get(j);
-//                 float f1 = entity1.getCollisionBorderSize();
-//                 AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand(f1, f1,
-//                         f1);
-//                 MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
-//                 if (axisalignedbb.isVecInside(vec3)) {
-//                     if (d2 >= 0.0D) {
-//                         pointedEntity = entity1;
-//                         vec33 = movingobjectposition == null ? vec3 : movingobjectposition.hitVec;
-//                         d2 = 0.0D;
-//                     }
-//                 } else if (movingobjectposition != null) {
-//                     double d3 = vec3.distanceTo(movingobjectposition.hitVec);
-//                     if (d3 < d2 || d2 == 0.0D) {
-//                         if (entity1 == entity.ridingEntity) {
-//                             if (d2 == 0.0D) {
-//                                 pointedEntity = entity1;
-//                                 vec33 = movingobjectposition.hitVec;
-//                             }
-//                         } else {
-//                             pointedEntity = entity1;
-//                             vec33 = movingobjectposition.hitVec;
-//                             d2 = d3;
-//                         }
-//                     }
-//                 }
-//             }
-//
-//             if (pointedEntity != null && flag
-//                     && vec3.distanceTo(vec33) > (ModuleManager.getModuleByName("Reach").isEnable() ? Reach.ReachRange.getValue() : 3.0D)) {
-//                pointedEntity = null;
-//                mc.objectMouseOver = new MovingObjectPosition(MovingObjectType.MISS, vec33, null,
-//                         new BlockPos(vec33));
-//             }
-//
-//             if (pointedEntity != null && (d2 < d1 || mc.objectMouseOver == null)) {
-//                mc.objectMouseOver = new MovingObjectPosition(pointedEntity, vec33);
-//                 if (pointedEntity instanceof EntityLivingBase || pointedEntity instanceof EntityItemFrame) {
-//                     mc.pointedEntity = pointedEntity;
-//                 }
-//             }
-//
-//            mc.mcProfiler.endSection();
-//         }
-//		return true;
-//     
-//    }
-	
+    public static boolean getMouseOver(EntityRenderer entityRenderer, float partialTicks) {
+        Minecraft mc = Minecraft.getMinecraft();
+        Entity entity = mc.getRenderViewEntity();
+        Entity pointedEntity = null;
+//        double reach = cn.n3ro.ghostclient.management.ModuleManager.getModuleByName("Reach").isEnable() ? cn.n3ro.ghostclient.module.modules.COMBAT.Reach.getReach()
+//                : 4;
+		if (entity != null && mc.theWorld != null) {
+			mc.mcProfiler.startSection("pick");
+			mc.pointedEntity = null;
+		
+			double d0 = ModuleManager.getModuleByName("Reach").isEnable() ? Reach.getReach()
+					: (double) mc.playerController.getBlockReachDistance();
+			
+			mc.objectMouseOver = entity.rayTrace(ModuleManager.getModuleByName("Reach").isEnable() ? Reach.getReach() : d0,
+					partialTicks);
+			double d1 = d0;
+			Vec3 vec3 = entity.getPositionEyes(partialTicks);
+			boolean flag = false;
+			if (mc.playerController.extendedReach()) {
+				d0 = 6.0D;
+				d1 = 6.0D;
+			} else if (d0 > 3.0D) {
+				flag = true;
+			}
+
+			if (mc.objectMouseOver != null) {
+				d1 = mc.objectMouseOver.hitVec.distanceTo(vec3);
+			}
+
+			if (ModuleManager.getModuleByName("Reach").isEnable()) {
+				d1 = Reach.getReach();
+				MovingObjectPosition vec31 = entity.rayTrace(d1, partialTicks);
+				if (vec31 != null) {
+					d1 = vec31.hitVec.distanceTo(vec3);
+				}
+			}
+
+			Vec3 var24 = entity.getLook(partialTicks);
+			Vec3 vec32 = vec3.addVector(var24.xCoord * d0, var24.yCoord * d0, var24.zCoord * d0);
+			pointedEntity = null;
+			Vec3 vec33 = null;
+			float f = 1.0F;
+			List list = mc.theWorld.getEntitiesInAABBexcluding(entity,
+					entity.getEntityBoundingBox().addCoord(var24.xCoord * d0, var24.yCoord * d0, var24.zCoord * d0)
+							.expand((double) f, (double) f, (double) f),
+					Predicates.and(EntitySelectors.NOT_SPECTATING, (p_apply_1_) -> {
+						return p_apply_1_.canBeCollidedWith();
+					}));
+			double d2 = d1;
+
+			for (int j = 0; j < list.size(); ++j) {
+				Entity entity1 = (Entity) list.get(j);
+				float f1 = entity1.getCollisionBorderSize();
+				AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expand((double) f1, (double) f1,
+						(double) f1);
+				MovingObjectPosition movingobjectposition = axisalignedbb.calculateIntercept(vec3, vec32);
+				if (axisalignedbb.isVecInside(vec3)) {
+					if (d2 >= 0.0D) {
+						pointedEntity = entity1;
+						vec33 = movingobjectposition == null ? vec3 : movingobjectposition.hitVec;
+						d2 = 0.0D;
+					}
+				} else if (movingobjectposition != null) {
+					double d3 = vec3.distanceTo(movingobjectposition.hitVec);
+					if (d3 < d2 || d2 == 0.0D) {
+						if (entity1 == entity.ridingEntity) {
+							if (d2 == 0.0D) {
+								pointedEntity = entity1;
+								vec33 = movingobjectposition.hitVec;
+							}
+						} else {
+							pointedEntity = entity1;
+							vec33 = movingobjectposition.hitVec;
+							d2 = d3;
+						}
+					}
+				}
+			}
+
+			if (pointedEntity != null && flag
+					&& vec3.distanceTo(vec33) > (ModuleManager.getModuleByName("Reach").isEnable() ? Reach.getReach() : 3.0D)) {
+				pointedEntity = null;
+				mc.objectMouseOver = new MovingObjectPosition(MovingObjectType.MISS, vec33, (EnumFacing) null,
+						new BlockPos(vec33));
+			}
+
+			if (pointedEntity != null && (d2 < d1 || mc.objectMouseOver == null)) {
+				mc.objectMouseOver = new MovingObjectPosition(pointedEntity, vec33);
+				if (pointedEntity instanceof EntityLivingBase || pointedEntity instanceof EntityItemFrame) {
+					mc.pointedEntity = pointedEntity;
+				}
+			}
+
+			mc.mcProfiler.endSection();
+		}
+        
+        return true;
+	}
     
     public static void startSectionHook(String info){
         if (info.equalsIgnoreCase("hand")){

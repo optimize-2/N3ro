@@ -1,7 +1,7 @@
 package cn.n3ro.ghostclient.module;
 
 import cn.n3ro.ghostclient.Client;
-import cn.n3ro.ghostclient.management.FileManager;
+
 import cn.n3ro.ghostclient.utils.PlayerUtil;
 import cn.n3ro.ghostclient.value.Value;
 import com.darkmagician6.eventapi.EventManager;
@@ -85,7 +85,20 @@ public class Module {
     public void onToggle(){
         
     }
+    public void on()
+    {
+        this.enable = true;
+        this.onEnable();
+        EventManager.register(this);
+        
+    }
 
+    public void off()
+    {
+        this.enable = false;
+        this.onDisable();
+        EventManager.unregister(this);
+    }
     public Category getCategory() {
         return category;
     }

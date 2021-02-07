@@ -52,6 +52,7 @@ public class ClassTransformer implements IClassTransformer, ClassFileTransformer
         		"net.minecraft.client.multiplayer.PlayerControllerMP",
         		"net.minecraft.client.gui.GuiIngame",
                 "net.minecraft.client.Minecraft",
+                "net.minecraft.entity.Entity",
                 "net.minecraft.client.entity.EntityPlayerSP",
                 "net.minecraft.network.NetworkManager",
                 "net.minecraft.profiler.Profiler",
@@ -105,67 +106,38 @@ public class ClassTransformer implements IClassTransformer, ClassFileTransformer
             if (name.equalsIgnoreCase("net.minecraft.network.NetworkManager")) { //	EventPacket
                 return this.transformMethods(classByte, PacketHook::transformNetworkManager);
             }
+            if (name.equalsIgnoreCase("net.minecraft.client.renderer.EntityRenderer")){//ViewClip Reach Render 
+                return transformMethods(classByte, MinecraftHook::transformRenderEntityRenderer);
+            }else if (name.equalsIgnoreCase("net.minecraft.entity.Entity")){
+				
+			}
 //            if (name.equalsIgnoreCase("net.minecraft.client.gui.GuiIngame")){//	hook2D-Render
 //               return transformMethods(classByte, EventRendererHook::transformEvent2DLoad);
 //            }
             if (name.equalsIgnoreCase("net.minecraft.client.renderer.entity.RenderPlayer")){ //	RenderPlayer
                 return this.transformMethods(classByte,MinecraftHook::transformRendererLivingEntity);
             }
-            if(name.equalsIgnoreCase("net.minecraft.client.multiplayer.PlayerControllerMP")) { //reach
-            	 return this.transformMethods(classByte,MinecraftHook::transformTest);
-            }
             ClassPool e;
             CtClass cc;
             CtMethod cm;
            
-            if(name.equals("net.minecraft.client.multiplayer.PlayerControllerMP")) {// reach
+            if(name.equals("net.minecraft.client.multiplayer.PlayerControllerMP")) {//Reach
             	
-//            	   e = ClassPool.getDefault();
-//                   cc = e.makeClass(new ByteArrayInputStream(classByte));
-//                   cm = getDeclaredMethod(cc, new String[]{"func_78757_d", "getBlockReachDistance"});
-//                   cm.setBody("{ return 100;}");
+            	   e = ClassPool.getDefault();
+                   cc = e.makeClass(new ByteArrayInputStream(classByte));
+                   cm = getDeclaredMethod(cc, new String[]{"func_78757_d", "getBlockReachDistance"});
+                   cm.setBody("return cn.n3ro.ghostclient.hooks.MinecraftHook.getBlockReachDistance_Range();");
+   				
+            }else if (name.equals("net.minecraft.entity.Entity")) { // HitBox and EventMove
+              e = ClassPool.getDefault();
+              cc = e.makeClass(new ByteArrayInputStream(classByte));
+              cm = getDeclaredMethod(cc, new String[]{"func_70111_Y", "getCollisionBorderSize"});
+              cm.setBody("return cn.n3ro.ghostclient.hooks.EntityPlayerSPHook.getCollisionBorderSize();");
+            return this.transformMethods(classByte,EntityPlayerSPHook::transformEntity);
 
-             
-          
-            }else if (name.equals("net.minecraft.client.renderer.EntityRenderer")) {//3D renderer
-            	
-            	ClassNode cn = ClassNodeUtils.toClassNode(classByte);
-				MethodNode mn = getDeclaredMethod(cn, "func_175068_a", "renderWorldPass");
-
-				int index = -1;
-				for (int i=0; i<mn.instructions.size(); i++) {
-					AbstractInsnNode insn = mn.instructions.get(i);
-					if (insn instanceof FieldInsnNode && ((FieldInsnNode)insn).getOpcode()==Opcodes.GETFIELD) {
-						if (((FieldInsnNode)insn).owner.equals("net/minecraft/client/renderer/EntityRenderer")
-								&& (((FieldInsnNode)insn).name.equals("renderHand")||((FieldInsnNode)insn).name.equals("field_175074_C"))) {
-							index = i;
-							break;
-						}
-					}
-				}
-				
-				if (index >= 0) {
-					mn.instructions.insertBefore(mn.instructions.get(index), ClassNodeUtils.toNodes(
-							new VarInsnNode(Opcodes.ILOAD, 1),
-							new VarInsnNode(Opcodes.FLOAD, 2),
-							new VarInsnNode(Opcodes.LLOAD, 3),
-							new MethodInsnNode(Opcodes.INVOKESTATIC,Type.getInternalName(EventRendererHook.class) , "Event3DLoad", "(IFJ)V")
-							));
-				}
-            	
-            	
-//            	ClassNode cn1 = ClassNodeUtils.toClassNode(classByte);
-//				MethodNode mn1 = getDeclaredMethod(cn1, "func_78473_a", "getMouseOver");
-//				LabelNode labelNode = new LabelNode();
-//				mn1.instructions.insertBefore(mn1.instructions.getFirst(), ClassNodeUtils.toNodes(
-//						new VarInsnNode(Opcodes.ALOAD, 0),
-//						new VarInsnNode(Opcodes.FLOAD, 1),
-//						new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(ProfilerHook.class), "getMouseOver", "(Lnet/minecraft/client/renderer/EntityRenderer;F)Z"),
-//						new JumpInsnNode(Opcodes.IFEQ, labelNode),
-//						new InsnNode(Opcodes.RETURN),
-//						labelNode
-//						));
-			}
+            	//hitbox
+			
+            }
 
            
         } catch (Exception e) {
@@ -175,7 +147,6 @@ public class ClassTransformer implements IClassTransformer, ClassFileTransformer
 
         return classByte;
     }
-
 	public static CtMethod getDeclaredMethod(CtClass cc, String... name) {
 		CtMethod[] cms = cc.getMethods();
 		for (int j = 0; j<cms.length; j++) {

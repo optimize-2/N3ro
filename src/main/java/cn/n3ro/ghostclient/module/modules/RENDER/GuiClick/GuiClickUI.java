@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import cn.n3ro.ghostclient.Client;
 import cn.n3ro.ghostclient.font.CFontRenderer;
+import cn.n3ro.ghostclient.font.FontLoaders;
 import cn.n3ro.ghostclient.module.Category;
 import cn.n3ro.ghostclient.module.Module;
 import cn.n3ro.ghostclient.module.modules.RENDER.ClickGui;
@@ -56,9 +57,9 @@ public class GuiClickUI extends GuiScreen {
         return false;
     }
 
-    CFontRenderer font1 = Client.instance.fontLoaders.getFont(18);
-    CFontRenderer font2 = Client.instance.fontLoaders.getFont(16);
-    CFontRenderer font3 = Client.instance.fontLoaders.getFont(14);
+    CFontRenderer font1 =  FontLoaders.default18;
+    CFontRenderer font2 =  FontLoaders.default16;
+    CFontRenderer font3 = FontLoaders.default14;
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -78,7 +79,7 @@ public class GuiClickUI extends GuiScreen {
         RenderUtil.drawBorderedRect(x + 2, y + 2, x + 273 - 2, y + 198 - 2, 1, getColor(),
                 new Color(20, 20, 20).getRGB());
         Gui.drawRect(x + 70, y + 35, x + 269, y + 195, new Color(0, 0, 0).getRGB());
-        Client.instance.fontLoaders.getFont(30).drawStringWithShadow(Client.CLIENT_NAME, x + 10, y + 8, new Color(180, 180, 180).getRGB());
+        FontLoaders.default30.drawStringWithShadow(Client.CLIENT_NAME, x + 10, y + 8, new Color(180, 180, 180).getRGB());
         font2.drawStringWithShadow(Client.CLIENT_VERSION, x + 12, y + 24, new Color(180, 180, 180).getRGB());
 
         RenderUtil.drawGradientSideways(x + 70, y + 35, x + 80, y + 195, new Color(20, 20, 20).getRGB(),
@@ -89,7 +90,7 @@ public class GuiClickUI extends GuiScreen {
             int strX = x + 40;
             int strY = y + 55 + cateY;
             boolean hover = mouseX > x + 5 && mouseX < x + 65 && mouseY > strY && mouseY < strY + 20;
-            Client.instance.fontLoaders.getFont(20).drawCenteredStringWithShadow(category.name().substring(0,1).toUpperCase() + category.name().substring(1).toLowerCase(), strX - 1, strY + 6,
+            FontLoaders.default20.drawCenteredStringWithShadow(category.name().substring(0,1).toUpperCase() + category.name().substring(1).toLowerCase(), strX - 1, strY + 6,
                     (category == currentCategory) ? getColor()
                             : new Color(hover ? 255 : 140, hover ? 255 : 140, hover ? 255 : 140).getRGB());
             cateY += 20;

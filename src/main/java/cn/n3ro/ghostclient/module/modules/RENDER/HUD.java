@@ -26,7 +26,7 @@ public class HUD extends Module {
     public static Option<Boolean>hudPosition = new Option("Position", true);
     public static Option<Boolean>hudArraylist = new Option("Arraylist", true);
     public static Option<Boolean>hudFade = new Option("Fade", true);
-
+   
     public HUD() {
         super("HUD", Category.RENDER);
         set(true);
@@ -36,7 +36,7 @@ public class HUD extends Module {
     @EventTarget
     private void render2D(EventRender2D event) {
         ScaledResolution sr = new ScaledResolution(mc);
-        CFontRenderer font = Client.instance.fontLoaders.getFont(20);
+        CFontRenderer font = FontLoaders.default20;
 
         if(hudTitle.getValue()) {
             int titlecolor;

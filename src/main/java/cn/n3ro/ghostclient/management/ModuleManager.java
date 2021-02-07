@@ -2,12 +2,13 @@ package cn.n3ro.ghostclient.management;
 
 import cn.n3ro.ghostclient.module.Category;
 import cn.n3ro.ghostclient.module.Module;
+import cn.n3ro.ghostclient.module.modules.COMBAT.HitBox;
 import cn.n3ro.ghostclient.module.modules.COMBAT.Reach;
+import cn.n3ro.ghostclient.module.modules.MOVEMENT.Bhop;
 import cn.n3ro.ghostclient.module.modules.MOVEMENT.Eagle;
 import cn.n3ro.ghostclient.module.modules.MOVEMENT.InvMove;
 import cn.n3ro.ghostclient.module.modules.MOVEMENT.Sprint;
 import cn.n3ro.ghostclient.module.modules.MOVEMENT.Time;
-import cn.n3ro.ghostclient.module.modules.PLAYER.HitBox;
 import cn.n3ro.ghostclient.module.modules.RENDER.*;
 
 import java.util.ArrayList;
@@ -18,19 +19,21 @@ public class ModuleManager {
 
     public ModuleManager() {
         //Combat
+    	addModule(new HitBox());
     	addModule(new Reach());
 
         //Misc
 
 
         //Movement
+    	addModule(new Bhop());
         addModule(new Eagle());
         addModule(new InvMove());
         addModule(new Sprint());
         addModule(new Time());
 
         //Player
-        addModule(new HitBox());
+
 
         //Render
         addModule(new Chams());

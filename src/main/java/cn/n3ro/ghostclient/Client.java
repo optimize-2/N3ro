@@ -2,6 +2,7 @@ package cn.n3ro.ghostclient;
 
 import cn.n3ro.ghostclient.font.FontLoaders;
 import cn.n3ro.ghostclient.management.CommandManager;
+import cn.n3ro.ghostclient.management.ConfigurationManager;
 import cn.n3ro.ghostclient.management.FileManager;
 import cn.n3ro.ghostclient.management.ModuleManager;
 import cn.n3ro.ghostclient.module.Module;
@@ -40,7 +41,7 @@ public class Client {
     }
 
     public Client() {
-        this.fileManager = new FileManager();
+    	this.fileManager = new FileManager();
         FileManager.init();
         instance = this;
         initiated = true;
@@ -53,7 +54,7 @@ public class Client {
         this.moduleManager = new ModuleManager();
         this.commandManager = new CommandManager();
         this.fontLoaders = new FontLoaders();
-
+       // ConfigurationManager.instance();
         LoggerUtils.info("ghost client init ");
     }
 

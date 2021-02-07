@@ -3,12 +3,21 @@ package cn.n3ro.ghostclient.hooks;
 import cn.n3ro.ghostclient.Client;
 import cn.n3ro.ghostclient.command.Command;
 import cn.n3ro.ghostclient.events.EventMotion;
+import cn.n3ro.ghostclient.events.EventMove;
 import cn.n3ro.ghostclient.events.EventUpdate;
 import cn.n3ro.ghostclient.management.CommandManager;
+import cn.n3ro.ghostclient.management.ModuleManager;
+import cn.n3ro.ghostclient.module.modules.COMBAT.HitBox;
 import cn.n3ro.ghostclient.utils.ASMUtil;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.CtMethod;
+
 import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.types.EventType;
 import net.minecraft.client.Minecraft;
+
+import java.io.ByteArrayInputStream;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -90,6 +99,32 @@ public class EntityPlayerSPHook implements Opcodes{
             method.instructions.insert(insnList);
         }
     }
+    public static void transformEntity(ClassNode classNode, MethodNode methodNode) {
+		if (methodNode.name.equalsIgnoreCase("moveEntity") || methodNode.name.equalsIgnoreCase("func_70091_d")) {
+			final InsnList insnList = new InsnList();
+			insnList.add(new TypeInsnNode(Opcodes.NEW, Type.getInternalName(EventMove.class)));
+			insnList.add(new InsnNode(Opcodes.DUP));
+			insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
+			insnList.add(new VarInsnNode(Opcodes.DLOAD, 1));
+			insnList.add(new VarInsnNode(Opcodes.DLOAD, 3));
+			insnList.add(new VarInsnNode(Opcodes.DLOAD, 5));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, Type.getInternalName(EventMove.class), "<init>","(Ljava/lang/Object;DDD)V", false));
+			insnList.add(new VarInsnNode(Opcodes.ASTORE, 11));
+			insnList.add(new VarInsnNode(Opcodes.ALOAD, 11));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(EventManager.class), "call", "(Lcom/darkmagician6/eventapi/events/Event;)Lcom/darkmagician6/eventapi/events/Event;", false));
+			insnList.add(new InsnNode(Opcodes.POP));
+			insnList.add(new VarInsnNode(Opcodes.ALOAD, 11));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Type.getInternalName(EventMove.class), "getX", "()D", false));
+			insnList.add(new VarInsnNode(Opcodes.DSTORE, 1));
+			insnList.add(new VarInsnNode(Opcodes.ALOAD, 11));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Type.getInternalName(EventMove.class), "getY", "()D", false));
+			insnList.add(new VarInsnNode(Opcodes.DSTORE, 3));
+			insnList.add(new VarInsnNode(Opcodes.ALOAD, 11));
+			insnList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, Type.getInternalName(EventMove.class), "getZ", "()D", false));
+			insnList.add(new VarInsnNode(Opcodes.DSTORE, 5));
+			methodNode.instructions.insert(insnList);
+		}
+	}
     public static void hookMotionUpdate(EventType stage) {
         if (stage == EventType.PRE){
             EventMotion em = new EventMotion(Minecraft.getMinecraft().thePlayer.posY, Minecraft.getMinecraft().thePlayer.rotationYaw,Minecraft.getMinecraft().thePlayer.rotationPitch,Minecraft.getMinecraft().thePlayer.onGround);
@@ -100,7 +135,18 @@ public class EntityPlayerSPHook implements Opcodes{
         }
 
     }
+    public static CtMethod getDeclaredMethod(CtClass cc, String... name) {
+		CtMethod[] cms = cc.getMethods();
+		for (int j = 0; j<cms.length; j++) {
+			CtMethod cm = cms[j];
+			for (int i = 0; i<name.length; i++) {
+				if (name[i].equals(cm.getName()))
+					return cm;
+			}
+		}
 
+		return null;
+	}
     public static void hookOnUpdate(){
         EventManager.call(new EventUpdate());
     }
@@ -125,4 +171,22 @@ public class EntityPlayerSPHook implements Opcodes{
         return s.startsWith(s1)/* && !NoCommand.n*/;
     }
 
+    /*
+     * 
+     * HitBox
+     * 
+     */
+    public static float getCollisionBorderSize()
+	{
+		if(ModuleManager.getModuleByName("Hitbox").isEnable()) {
+			return 0.1F + HitBox.getSize();
+		} else {
+			return 0.1F;
+		}
+	}
+    
+//    public float getSPCollisionBorderSize() {
+//    	HitBox hitBox = ModuleManager.getModule(HitBox.class);
+//		return hitBox.isEnable() ? hitBox.getSize() : super.getCollisionBorderSize();
+//	}
 }
