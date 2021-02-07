@@ -11,7 +11,6 @@ import cn.n3ro.ghostclient.utils.PaletteUtil;
 import cn.n3ro.ghostclient.value.Numbers;
 import cn.n3ro.ghostclient.value.Option;
 import com.darkmagician6.eventapi.EventTarget;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
@@ -37,7 +36,7 @@ public class HUD extends Module {
     @EventTarget
     private void render2D(EventRender2D event) {
         ScaledResolution sr = new ScaledResolution(mc);
-        FontRenderer font = mc.fontRendererObj;
+        CFontRenderer font = Client.instance.fontLoaders.getFont(20);
 
         if(hudTitle.getValue()) {
             int titlecolor;
@@ -49,7 +48,7 @@ public class HUD extends Module {
             String firstname = Client.CLIENT_NAME.substring(0, 1);
             String theothername = Client.CLIENT_NAME.substring(1);
             font.drawStringWithShadow(firstname, 3, 3, titlecolor);
-            font.drawStringWithShadow(theothername, (float) (3 + font.getStringWidth(firstname) + 1.5), 3, -1);
+            font.drawStringWithShadow(theothername, 3 + font.getStringWidth(firstname) + 1.5, 3, -1);
         }
 
         if(hudPosition.getValue()) {

@@ -6,11 +6,10 @@ import cn.n3ro.ghostclient.events.EventMotion;
 import cn.n3ro.ghostclient.events.EventUpdate;
 import cn.n3ro.ghostclient.management.CommandManager;
 import cn.n3ro.ghostclient.utils.ASMUtil;
-import cn.n3ro.ghostclient.utils.LoggerUtils;
 import com.darkmagician6.eventapi.EventManager;
 import com.darkmagician6.eventapi.types.EventType;
 import net.minecraft.client.Minecraft;
-import org.newdawn.slick.tests.xml.Entity;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;

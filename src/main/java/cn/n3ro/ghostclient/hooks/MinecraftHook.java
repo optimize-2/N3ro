@@ -2,16 +2,20 @@ package cn.n3ro.ghostclient.hooks;
 
 import cn.n3ro.ghostclient.Client;
 import cn.n3ro.ghostclient.ClientLoader;
+import cn.n3ro.ghostclient.events.EventMotion;
 import cn.n3ro.ghostclient.events.EventRender2D;
 import cn.n3ro.ghostclient.events.EventRender3D;
 import cn.n3ro.ghostclient.events.EventTick;
 import cn.n3ro.ghostclient.management.ModuleManager;
 import cn.n3ro.ghostclient.module.Module;
+import cn.n3ro.ghostclient.module.modules.COMBAT.Reach;
 import cn.n3ro.ghostclient.module.modules.RENDER.Chams;
 import cn.n3ro.ghostclient.module.modules.RENDER.NoHurtCam;
 import cn.n3ro.ghostclient.utils.ASMUtil;
 import cn.n3ro.ghostclient.utils.GLUProjection;
 import com.darkmagician6.eventapi.EventManager;
+import com.darkmagician6.eventapi.types.EventType;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GLAllocation;
@@ -25,7 +29,7 @@ import org.objectweb.asm.tree.*;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Iterator;
+import java.util.*;
 import java.util.Objects;
 
 public class MinecraftHook {
@@ -46,11 +50,35 @@ public class MinecraftHook {
                 if (methodInsn.name.equals("dispatchKeypresses") | method.name.equalsIgnoreCase("func_152348_aa")) {
                     method.instructions.insert(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(MinecraftHook.class), "hookKeyHandler", "()V", false));
                 }
+              
             }
         }
     }
 
-
+    /*
+     * 
+     *	just reach test
+     */
+    public static void transformTest(ClassNode clazz, MethodNode method) {
+        if (method.name.equalsIgnoreCase("getBlockReachDistance") || method.name.equalsIgnoreCase("func_78757_d")){
+            InsnList insnList = new InsnList();
+            insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(MinecraftHook.class), "getBlockReachDistance", "()F", false));
+            method.instructions.insert(insnList);
+        }
+        
+    }
+    
+    /*
+     * 
+     *	just reach test
+     */
+    
+    public static float getBlockReachDistance(){
+		return 100;
+    }
+    
+ 
+    
     /**
      * ghost client start method
      */
@@ -77,6 +105,9 @@ public class MinecraftHook {
         }
     }
 
+    
+  
+    
     public static void transformRenderEntityRenderer(ClassNode classNode, MethodNode method) {
         if (method.name.equalsIgnoreCase("hurtCameraEffect") || method.name.equalsIgnoreCase("func_78482_e")){
             InsnList insnList = new InsnList();
@@ -104,6 +135,7 @@ public class MinecraftHook {
         }
     }
 
+  
     public static void transformRendererLivingEntity(ClassNode classNode, MethodNode method) {
         if (method.name.equalsIgnoreCase("doRender") || method.name.equalsIgnoreCase("func_76986_a")){
             InsnList insnList1 = new InsnList();
@@ -118,8 +150,6 @@ public class MinecraftHook {
         }
     }
 
-
-
     public static boolean isViewClipEnabled() {
         return Objects.requireNonNull(ModuleManager.getModuleByName("ViewClip")).isEnable();
     }
@@ -127,7 +157,18 @@ public class MinecraftHook {
     public static boolean isNohurtcamEnable(){
         return NoHurtCam.no;
     }
-
+    
+  //  public float getBlockReachDistance() {
+//    	if(ModuleManager.getModuleByName("Reach").isEnable() /*&& !ModManager.getModule("TPHit").isEnabled()*/) {
+//    		return (float) Reach.getReach() + 1.5f;
+//    	} else {
+//    		return 4.5F;
+//    	}
+//    	return 10F;
+//	}
+//    public static void getBlockReachDistance() {
+//    	System.out.println("asd111");
+//    }
     public static void chamsHook1(Object object){
         if (Client.instance.moduleManager.getModuleByName("Chams").isEnable() && object instanceof EntityPlayer){
             GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
