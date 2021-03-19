@@ -176,10 +176,7 @@ public class EntityPlayerSPHook implements Opcodes{
      * HitBox
      * 
      */
-    public static float getCollisionBorderSize()
-	{
-        return 0.1F + HitBox.getSize();
-    }
+
     
 //    public float getSPCollisionBorderSize() {
 //    	HitBox hitBox = ModuleManager.getModule(HitBox.class);

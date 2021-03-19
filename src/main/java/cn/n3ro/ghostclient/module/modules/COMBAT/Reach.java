@@ -11,7 +11,7 @@ import com.darkmagician6.eventapi.EventTarget;
 public class Reach extends Module {
 
 	@SuppressWarnings("unused")
-	public static Numbers<Double> reach = new Numbers<Double>("Reach_Reach", 3.0d, 3.0d, 6.0d, 0.1d);
+	public static Numbers<Double> reach = new Numbers<Double>("Reach", 3.0d, 3.0d, 6.0d, 0.1d);
     public Reach() {
         super("Reach", Category.COMBAT);
         this.addValues(reach);

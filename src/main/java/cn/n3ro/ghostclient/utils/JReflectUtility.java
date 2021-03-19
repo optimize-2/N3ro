@@ -23,7 +23,23 @@ public class JReflectUtility {
     private static Map<String, Field> cachedFields;
     private static Map<String, Method> cachedMethods;
 
-
+    public static Timer timer() {
+        try {
+            Class timer = Minecraft.class;
+            Field f1 = timer.getDeclaredField(new String(new char[]{'t', 'i', 'm', 'e', 'r'}));
+            f1.setAccessible(true);
+            return (Timer)f1.get(mc);
+        }catch (Exception var5) {
+            try {
+                Class time2 = Minecraft.class;
+                Field f2 = time2.getDeclaredField(new String(new char[]{'f', 'i', 'e', 'l', 'd', '_', '7', '1', '4', '2', '8', '_', 'T'}));
+                f2.setAccessible(true);
+                return (Timer)f2.get(mc);
+            } catch (Exception var4) {
+                return null;
+            }
+        }
+    }
     public static Object getMethodAsObject(Class<?> inClass, String name,
                                            boolean secureAccess, Object... parameter) {
         try {
@@ -51,6 +67,7 @@ public class JReflectUtility {
             fTimer = mc.getClass().getDeclaredField(
                     ClientLoader.runtimeDeobfuscationEnabled ? "field_71428_T" : "timer");
             fTimer.setAccessible(true);
+
         } catch (NoSuchFieldException ev) {
         }
         Field frenderPartialTicks = null;
@@ -68,7 +85,7 @@ public class JReflectUtility {
         }
         return pTicks;
     }
-    
+
     public static Object getMethodAsObject(Class<?> inClass, Object instance,
                                            String name, boolean secureAccess, Object... parameter){
         try{
@@ -174,16 +191,16 @@ public class JReflectUtility {
     }
 
     private static final Minecraft mc = Minecraft.getMinecraft();
-    
+
     public static void cameraTransform(float renderPartialTicks, int pass) {
-		try {
+        try {
             mc.entityRenderer.getClass().getDeclaredMethod(ClientLoader.runtimeDeobfuscationEnabled ? "func_78479_a" : "setupCameraTransform",float.class).setAccessible(true);
             mc.entityRenderer.getClass().getDeclaredMethod(ClientLoader.runtimeDeobfuscationEnabled ? "func_78479_a" : "setupCameraTransform",float.class,int.class).invoke(mc.entityRenderer,renderPartialTicks,pass);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-    
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void orientCamera(float renderPartialTicks){
         try {
             mc.entityRenderer.getClass().getDeclaredMethod(ClientLoader.runtimeDeobfuscationEnabled ? "func_78467_g" : "orientCamera",float.class).setAccessible(true);
@@ -196,7 +213,7 @@ public class JReflectUtility {
             e.printStackTrace();
         }
     }
-    
+
     public static AxisAlignedBB newInstanceAxisAlignedBB(double x, double y, double z){
         Class<AxisAlignedBB> clazz = null;
         try {
@@ -245,16 +262,16 @@ public class JReflectUtility {
     }
 
     public static void setRightClickDelayTimer(int i) {
-      try{
-        Field rightClickDelayTimer =
-                mc.getClass().getDeclaredField(ClientLoader.runtimeDeobfuscationEnabled
-                        ? "field_71467_ac" : "rightClickDelayTimer");//field_71467_ac
-        rightClickDelayTimer.setAccessible(true);
-        rightClickDelayTimer.setInt(mc, 0);
-    }catch(ReflectiveOperationException e)
-    {
-        throw new RuntimeException(e);
-    }
+        try{
+            Field rightClickDelayTimer =
+                    mc.getClass().getDeclaredField(ClientLoader.runtimeDeobfuscationEnabled
+                            ? "field_71467_ac" : "rightClickDelayTimer");//field_71467_ac
+            rightClickDelayTimer.setAccessible(true);
+            rightClickDelayTimer.setInt(mc, 0);
+        }catch(ReflectiveOperationException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -307,7 +324,7 @@ public class JReflectUtility {
     }
 
 
-        public static void setCurBlockDamageMP(int i) {
+    public static void setCurBlockDamageMP(int i) {
         Field field = null;
         try {
             field = PlayerControllerMP.class.getDeclaredField(
@@ -401,7 +418,6 @@ public class JReflectUtility {
         return null;
     }
 
-    //枪械物品的父类
     public static Class getGunItem(){
         try {
             return Class.forName("deci.ao.b");

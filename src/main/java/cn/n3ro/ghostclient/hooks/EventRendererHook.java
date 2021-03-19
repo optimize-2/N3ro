@@ -44,16 +44,18 @@ public class EventRendererHook implements Opcodes {
 //	            insnList1.add(new VarInsnNode(Opcodes.ALOAD,1));
 //	            method.instructions.insert(insnList1);
 
-	         
+
 	            method.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC, Type.getInternalName(EventRendererHook.class), "hook2D", "(F)V", false));
-	        
-	         
+
+
 		  }  
 	        
 	    }
 	  public static void hook2D(){
 	        EventManager.call(new EventRender2D());
 	   }
+
+
 	    public static void Event3D(){
 	        GLUProjection projection = GLUProjection.getInstance();
 	        IntBuffer viewPort = GLAllocation.createDirectIntBuffer(16);
